@@ -15,7 +15,7 @@ const AddUser = () => {
     // Fetch existing data from the server
     const fetchExistingData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/users");
+        const response = await axios.get("https://cooperative-puce-pelican.cyclic.cloud/users");
         setExistingData(response.data);
       } catch (error) {
         console.log(error);
@@ -50,7 +50,7 @@ const AddUser = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/users", {
+      await axios.post("https://cooperative-puce-pelican.cyclic.cloud/users", {
         name,
         email,
         point: pointValue,

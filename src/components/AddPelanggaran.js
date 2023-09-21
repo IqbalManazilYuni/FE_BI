@@ -17,7 +17,7 @@ const AddPelanggaran = () => {
   }, []);
 
   const getUserById = async () => {
-    const response = await axios.get(`http://localhost:5000/users/${id}`);
+    const response = await axios.get(`https://cooperative-puce-pelican.cyclic.cloud/users/${id}`);
     setUser(response.data);
   };
 
@@ -35,7 +35,7 @@ const AddPelanggaran = () => {
 
     try {
       // Mengirim data ke server dalam format yang sesuai
-      await axios.post("http://localhost:5000/pelanggarans", {
+      await axios.post("https://cooperative-puce-pelican.cyclic.cloud/pelanggarans", {
         user: users._id,
         date: selectedDate,
         keterangan,
@@ -44,7 +44,7 @@ const AddPelanggaran = () => {
 
       // Pengurangan point dari user
       const updatedPoint = users.point - totalKurangPoint;
-      await axios.patch(`http://localhost:5000/users/${id}`, {
+      await axios.patch(`https://cooperative-puce-pelican.cyclic.cloud/users/${id}`, {
         point: updatedPoint,
       });
 

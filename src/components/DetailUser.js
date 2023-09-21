@@ -16,7 +16,7 @@ const DetailUser = () => {
   useEffect(() => {
     // Mengambil data pengguna berdasarkan ID
     axios
-      .get(`http://localhost:5000/users/${id}`)
+      .get(`https://cooperative-puce-pelican.cyclic.cloud/users/${id}`)
       .then((response) => {
         setName(response.data.name);
         setEmail(response.data.email);
@@ -30,7 +30,7 @@ const DetailUser = () => {
 
     // Mengambil semua data pelanggaran
     axios
-      .get("http://localhost:5000/pelanggarans")
+      .get("https://cooperative-puce-pelican.cyclic.cloud/pelanggarans")
       .then((response) => {
         // Menerapkan filter pada pelanggaran berdasarkan ID pengguna
         const filteredPelanggarans = response.data.filter(

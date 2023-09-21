@@ -16,7 +16,7 @@ const EditUser = () => {
   },[]);
 
   const getUserById = async()=>{
-    const response = await axios.get(`http://localhost:5000/users/${id}`);
+    const response = await axios.get(`https://cooperative-puce-pelican.cyclic.cloud/users/${id}`);
     setName(response.data.name);
     setEmail(response.data.email);
   }
@@ -24,7 +24,7 @@ const EditUser = () => {
     // Fetch existing data from the server
     const fetchExistingData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/users");
+        const response = await axios.get("https://cooperative-puce-pelican.cyclic.cloud/users");
         setExistingData(response.data);
       } catch (error) {
         console.log(error);
@@ -51,7 +51,7 @@ const EditUser = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/users", {
+      await axios.post("https://cooperative-puce-pelican.cyclic.cloud/users", {
         name,
         email
       });
