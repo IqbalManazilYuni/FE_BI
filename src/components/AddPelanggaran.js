@@ -17,7 +17,9 @@ const AddPelanggaran = () => {
   }, []);
 
   const getUserById = async () => {
-    const response = await axios.get(`https://cooperative-puce-pelican.cyclic.cloud/users/${id}`);
+    const response = await axios.get(
+      `https://cooperative-puce-pelican.cyclic.cloud/users/${id}`
+    );
     setUser(response.data);
   };
 
@@ -26,7 +28,11 @@ const AddPelanggaran = () => {
 
     // Menghitung jumlah point yang akan dikurangkan
     const totalKurangPoint = parseInt(Kurangpoint, 10);
-
+    // Memastikan total pengurangan point tidak kurang dari 0
+    if (totalKurangPoint < 0 || totalKurangPoint > 100) {
+      alert("Pengurangan point harus diantara 0 dan 100.");
+      return;
+    }
     // Memastikan total pengurangan point tidak kurang dari 0
     if (users.point - totalKurangPoint < 0) {
       alert("Pengurangan point Gagal.");
@@ -35,18 +41,24 @@ const AddPelanggaran = () => {
 
     try {
       // Mengirim data ke server dalam format yang sesuai
-      await axios.post("https://cooperative-puce-pelican.cyclic.cloud/pelanggarans", {
-        user: users._id,
-        date: selectedDate,
-        keterangan,
-        Kurangpoint: totalKurangPoint, // Menggunakan totalKurangPoint yang sudah dihitung
-      });
+      await axios.post(
+        "https://cooperative-puce-pelican.cyclic.cloud/pelanggarans",
+        {
+          user: users._id,
+          date: selectedDate,
+          keterangan,
+          Kurangpoint: totalKurangPoint, // Menggunakan totalKurangPoint yang sudah dihitung
+        }
+      );
 
       // Pengurangan point dari user
       const updatedPoint = users.point - totalKurangPoint;
-      await axios.patch(`https://cooperative-puce-pelican.cyclic.cloud/users/${id}`, {
-        point: updatedPoint,
-      });
+      await axios.patch(
+        `https://cooperative-puce-pelican.cyclic.cloud/users/${id}`,
+        {
+          point: updatedPoint,
+        }
+      );
 
       // Navigasi kembali ke halaman utama setelah berhasil
       navigate("/");
