@@ -5,6 +5,7 @@ import { useParams, Link } from "react-router-dom";
 const DetailUser = () => {
   const [user, setUser] = useState({});
   const [pelanggarans, setPelanggarans] = useState([]);
+  const [Kurangpoint, setKurangpoint] = useState(0);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [point, setPoint] = useState("");
@@ -42,12 +43,43 @@ const DetailUser = () => {
         console.error("Error fetching pelanggaran data:", error);
       });
   }, [id]);
+
   // Untuk mengubah format tanggal
   function formatDate(dateString) {
     const options = { year: "numeric", month: "2-digit", day: "2-digit" };
     const dateObj = new Date(dateString);
     return dateObj.toLocaleDateString("en-US", options);
   }
+
+  const deletePelanggaran = async (pelanggaranId) => {
+    try {
+      // Hapus pelanggaran terlebih dahulu
+      await axios.delete(`https://cooperative-puce-pelican.cyclic.cloud/pelanggarans/${pelanggaranId}`);
+
+      // Tambahkan Kurangpoint ke point user
+      const updatedPoint = point + Kurangpoint;
+      await axios.patch(`https://cooperative-puce-pelican.cyclic.cloud/users/${id}`, {
+        point: updatedPoint,
+      });
+
+      // Refresh data pelanggaran dan point user
+      // Mengambil data pengguna berdasarkan ID
+      const userResponse = await axios.get(`https://cooperative-puce-pelican.cyclic.cloud/users/${id}`);
+      setName(userResponse.data.name);
+      setEmail(userResponse.data.email);
+      setPoint(userResponse.data.point);
+
+      // Mengambil semua data pelanggaran
+      const pelanggaranResponse = await axios.get("https://cooperative-puce-pelican.cyclic.cloud/pelanggarans");
+      // Menerapkan filter pada pelanggaran berdasarkan ID pengguna
+      const filteredPelanggarans = pelanggaranResponse.data.filter(
+        (pelanggaran) => pelanggaran.user === id
+      );
+      setPelanggarans(filteredPelanggarans);
+    } catch (error) {
+      console.error("Error deleting pelanggaran:", error);
+    }
+  };
 
   return (
     <div
@@ -117,7 +149,7 @@ const DetailUser = () => {
                           <td>{pelanggaran.keterangan}</td>
                           <td>{pelanggaran.Kurangpoint}</td>
                           <td>
-                            <button className="button is-danger is-rounded">
+                            <button onClick={() => deletePelanggaran(pelanggaran._id)} className="button is-danger is-rounded">
                               Delete
                             </button>
                           </td>
