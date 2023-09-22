@@ -53,34 +53,36 @@ const DetailUser = () => {
 
   const deletePelanggaran = async (pelanggaranId) => {
     try {
-      // Hapus pelanggaran terlebih dahulu
-      await axios.delete(`https://cooperative-puce-pelican.cyclic.cloud/pelanggarans/${pelanggaranId}`);
-
-      // Tambahkan Kurangpoint ke point user
-      const updatedPoint = point + Kurangpoint;
-      await axios.patch(`https://cooperative-puce-pelican.cyclic.cloud/users/${id}`, {
-        point: updatedPoint,
-      });
-
-      // Refresh data pelanggaran dan point user
-      // Mengambil data pengguna berdasarkan ID
-      const userResponse = await axios.get(`https://cooperative-puce-pelican.cyclic.cloud/users/${id}`);
-      setName(userResponse.data.name);
-      setEmail(userResponse.data.email);
-      setPoint(userResponse.data.point);
-
-      // Mengambil semua data pelanggaran
-      const pelanggaranResponse = await axios.get("https://cooperative-puce-pelican.cyclic.cloud/pelanggarans");
-      // Menerapkan filter pada pelanggaran berdasarkan ID pengguna
-      const filteredPelanggarans = pelanggaranResponse.data.filter(
-        (pelanggaran) => pelanggaran.user === id
+      const deletedPelanggaran = pelanggarans.find(
+        (pelanggaran) => pelanggaran._id === pelanggaranId
       );
-      setPelanggarans(filteredPelanggarans);
+      const totalKurangPoint = parseInt(deletedPelanggaran.Kurangpoint, 10);
+  
+      // Mengirim permintaan DELETE untuk menghapus pelanggaran
+      await axios.delete(
+        `https://cooperative-puce-pelican.cyclic.cloud/pelanggarans/${pelanggaranId}`
+      );
+  
+      // Menambahkan totalKurangPoint ke point pengguna
+      const updatedPoint = point + totalKurangPoint;
+  
+      // Mengirim permintaan PATCH untuk memperbarui point pengguna
+      await axios.patch(
+        `https://cooperative-puce-pelican.cyclic.cloud/users/${id}`,
+        { point: updatedPoint }
+      );
+  
+      // Setelah pembaruan berhasil, perbarui state
+      setPoint(updatedPoint);
+  
+      // Menghapus pelanggaran dari daftar pelanggarans
+      setPelanggarans((prevPelanggarans) =>
+        prevPelanggarans.filter((pelanggaran) => pelanggaran._id !== pelanggaranId)
+      );
     } catch (error) {
       console.error("Error deleting pelanggaran:", error);
     }
   };
-
   return (
     <div
       className="box"
@@ -122,14 +124,17 @@ const DetailUser = () => {
             <div className="columns is-centered">
               <div className="column is-four-fifths">
                 <Link
-                  to={"add/pelanggaran/"} 
+                  to={"add/pelanggaran/"}
                   className="button is-primary is-rounded"
                 >
                   Tambah
                 </Link>
-                <Link to={"/"} className="button is-normal is-danger ml-2 is-rounded">
-                Menu Utama
-              </Link>
+                <Link
+                  to={"/"}
+                  className="button is-normal is-danger ml-2 is-rounded"
+                >
+                  Menu Utama
+                </Link>
                 <div className="table-container">
                   <table className="table is-fullwidth is-striped is-hoverable is-responsive">
                     <thead>
@@ -149,7 +154,10 @@ const DetailUser = () => {
                           <td>{pelanggaran.keterangan}</td>
                           <td>{pelanggaran.Kurangpoint}</td>
                           <td>
-                            <button onClick={() => deletePelanggaran(pelanggaran._id)} className="button is-danger is-rounded">
+                            <button
+                              onClick={() => deletePelanggaran(pelanggaran._id)}
+                              className="button is-danger is-rounded"
+                            >
                               Delete
                             </button>
                           </td>

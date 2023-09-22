@@ -13,6 +13,14 @@ const UserList = () => {
     const response = await axios.get("https://cooperative-puce-pelican.cyclic.cloud/users");
     setUser(response.data);
   };
+  const deleteUser = async (id) => {
+    try {
+      await axios.delete(`https://cooperative-puce-pelican.cyclic.cloud/users/${id}`);
+      getUsers();
+    } catch (error) {
+      console.log(error);
+    }
+  };
   
   return (
     <div className="container mt-5">
@@ -43,7 +51,7 @@ const UserList = () => {
                       <Link to={`edit/${user._id}`} className="button is-warning is-rounded">
                         Edit
                       </Link>
-                      <button className="button is-danger is-rounded">
+                      <button onClick={()=> deleteUser(user._id)} className="button is-danger is-rounded">
                         Delete
                       </button>
                       <Link to={`detail/${user._id}`} className="button is-info is-rounded">
